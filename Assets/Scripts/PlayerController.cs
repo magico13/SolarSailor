@@ -17,7 +17,7 @@ public class PlayerController : MonoBehaviour
     {
         //Physics2D.gravity = new Vector2(0, -2f);
         _audio = GetComponent<AudioSource>();
-        _distToGround = GetComponent<Collider2D>().bounds.extents.y + 0.1f;
+        _distToGround = GetComponent<Collider2D>().bounds.extents.y + 0.25f;
         _body = GetComponent<Rigidbody2D>();
     }
 
@@ -32,23 +32,34 @@ public class PlayerController : MonoBehaviour
 
             Vector2 direction = worldMousePos - transform.position;
             direction.Normalize();
-
             _body.AddForce(-ThrowForce*direction);
 
+            Vector3 wrenchSpawn = transform.position + new Vector3(Mathf.Sign(direction.x) * 0.5f, 0);
+            Vector2 wrenchDir = worldMousePos - wrenchSpawn;
             //create wrench object
-            GameObject created = Instantiate(Wrench, transform.position + new Vector3(Mathf.Sign(direction.x)*0.5f, 0), Quaternion.identity);
+            GameObject created = Instantiate(Wrench, wrenchSpawn, Quaternion.Euler(0, 0, 0));
             created.SetActive(true);
             Rigidbody2D rigid = created.GetComponent<Rigidbody2D>();
             rigid.velocity = GetComponent<Rigidbody2D>().velocity;
-            rigid.AddForce(ThrowForce * direction);
-            rigid.AddTorque(Random.Range(-Rotation, Rotation));
+            rigid.AddForce(ThrowForce * wrenchDir.normalized);
+            rigid.angularVelocity = (Random.Range(-Rotation, Rotation));
             Destroy(created, 10f);
 
             _audio.PlayOneShot(ThrowSound);
         }
         if (Input.GetButtonDown("Jump") && IsGrounded())
         {
-            _body.AddForce(ThrowForce * 3 * Vector2.up);
+            _body.AddForce(ThrowForce * 2 * Vector2.up);
+        }
+    }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject?.CompareTag("EnemyWeapon") == true)
+        {
+            //Destroy(this.gameObject);
+            Debug.Log("Got hit!");
+            GameController.Instance.RestartGame();
         }
     }
 

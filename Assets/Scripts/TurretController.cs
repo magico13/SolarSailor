@@ -1,12 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class TurretController : MonoBehaviour
 {
 
     GameObject ThePlayer;
-    GameObject Wrench;
+    GameObject Bullet;
 
     float shootTimeout = 1f;
     float shootCounter = 0f;
@@ -16,7 +14,7 @@ public class TurretController : MonoBehaviour
     void Start()
     {
         ThePlayer = FindObjectOfType<PlayerController>().gameObject;
-        Wrench = FindObjectOfType<PlayerController>().Wrench;
+        Bullet = FindObjectOfType<TurretHolder>().Bullet;
     }
 
     // Update is called once per frame
@@ -35,11 +33,12 @@ public class TurretController : MonoBehaviour
         if (raycast.collider?.gameObject?.CompareTag("Player") == true)
         {
             shootCounter = 0;
+            canShoot = false;
 
             GameObject player = raycast.collider.gameObject;
             //is player, try to shoot
-            Vector2 direction = (transform.position - player.transform.position).normalized;
-            GameObject created = Instantiate(Wrench, transform.position + new Vector3(Mathf.Sign(direction.x) * 0.5f, 0), Quaternion.identity);
+            Vector2 direction = (player.transform.position - transform.position).normalized;
+            GameObject created = Instantiate(Bullet, transform.position + new Vector3(Mathf.Sign(direction.x) * 0.5f, 0), Quaternion.identity);
             created.SetActive(true);
             Rigidbody2D rigid = created.GetComponent<Rigidbody2D>();
             rigid.velocity = GetComponent<Rigidbody2D>().velocity;
