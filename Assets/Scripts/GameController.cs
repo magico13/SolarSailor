@@ -1,4 +1,4 @@
-﻿using System.Runtime.CompilerServices;
+﻿using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -10,6 +10,8 @@ public class GameController : MonoBehaviour
     // seconds until loop restarts automatically
     public int MaxTime = 60;
     public float Countdown;
+    public TextMeshProUGUI CountdownText;
+    public TextMeshProUGUI LoopsText;
 
     void Start()
     {
@@ -19,19 +21,26 @@ public class GameController : MonoBehaviour
 
         QualitySettings.vSyncCount = 0;
         Application.targetFrameRate = 60;
+        if (Loops > 0)
+        {
+            LoopsText.gameObject.SetActive(true);
+            LoopsText.SetText($"Loops: {Loops}");
+        }
     }
 
     void Update()
     {
         Countdown -= Time.deltaTime;
 
+        CountdownText.SetText(Mathf.RoundToInt(Countdown).ToString());
+
         if (Countdown < 0)
         {
-            RestartGame();
+            RestartLoop();
         }
     }
 
-    public void RestartGame()
+    public void RestartLoop()
     {
         Loops++;
         SceneManager.LoadScene(0);

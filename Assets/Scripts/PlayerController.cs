@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using TMPro;
+using UnityEngine;
 using UnityEngine.UIElements;
 
 public class PlayerController : MonoBehaviour
@@ -59,14 +60,16 @@ public class PlayerController : MonoBehaviour
         {
             //Destroy(this.gameObject);
             Debug.Log("Got hit!");
-            GameController.Instance.RestartGame();
+            GameController.Instance.RestartLoop();
         }
     }
 
     bool IsGrounded()
     {
+        bool grounded = Physics2D.IsTouchingLayers(GetComponent<Collider2D>(), LayerMask.GetMask("Default"));
+        if (grounded) return true;
         RaycastHit2D raycast = Physics2D.Raycast(transform.position, Vector2.down, _distToGround, LayerMask.GetMask("Default"));
-        //Debug.DrawLine(transform.position, raycast.point);
+        ////Debug.DrawLine(transform.position, raycast.point);
         return raycast.collider != null && raycast.distance < _distToGround;
     }
 
@@ -78,6 +81,15 @@ public class PlayerController : MonoBehaviour
             if (Mathf.Abs(_body.velocity.x) < MaxSpeed)
             {
                 _body.AddForce(ThrowForce * horizontal * Vector2.right);
+            }
+        }
+        if (Input.GetButton("Vertical") && IsGrounded())
+        {
+            float vertical = Input.GetAxis("Vertical");
+            // only down
+            if (vertical < 0)
+            {
+                _body.AddForce(ThrowForce * vertical * Vector2.up);
             }
         }
     }

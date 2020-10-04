@@ -10,11 +10,18 @@ public class TurretController : MonoBehaviour
     float shootCounter = 0f;
     bool canShoot = false;
 
+    bool onCeiling;
+
     // Start is called before the first frame update
     void Start()
     {
         ThePlayer = FindObjectOfType<PlayerController>().gameObject;
         Bullet = FindObjectOfType<TurretHolder>().Bullet;
+
+        var spriteRenderer = GetComponent<SpriteRenderer>();
+        var sprite = spriteRenderer.sprite;
+        onCeiling = sprite.name == "turret_c";
+
     }
 
     // Update is called once per frame
@@ -37,11 +44,12 @@ public class TurretController : MonoBehaviour
 
             GameObject player = raycast.collider.gameObject;
             //is player, try to shoot
-            Vector2 direction = (player.transform.position - transform.position).normalized;
-            GameObject created = Instantiate(Bullet, transform.position + new Vector3(Mathf.Sign(direction.x) * 0.5f, 0), Quaternion.identity);
+            Vector3 shotPosition = transform.position + new Vector3(0, (onCeiling ? -1 : 1) * 0.9f);
+            Vector2 direction = (player.transform.position - shotPosition).normalized;
+            
+            GameObject created = Instantiate(Bullet, shotPosition, Quaternion.identity);
             created.SetActive(true);
             Rigidbody2D rigid = created.GetComponent<Rigidbody2D>();
-            rigid.velocity = GetComponent<Rigidbody2D>().velocity;
             rigid.AddForce(150 * direction);
             Destroy(created, 10f);
         }
