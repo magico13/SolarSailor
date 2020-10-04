@@ -9,7 +9,9 @@ public class ButtonController : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-        if (!pressed && collision.collider?.gameObject?.CompareTag("Player") == true)
+        if (!pressed && 
+            (collision.collider?.gameObject?.CompareTag("Player") == true
+            || collision.collider?.gameObject?.CompareTag("Weapon") == true))
         {
             OnPress();
         }

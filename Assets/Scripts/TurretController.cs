@@ -18,10 +18,7 @@ public class TurretController : MonoBehaviour
         ThePlayer = FindObjectOfType<PlayerController>().gameObject;
         Bullet = FindObjectOfType<TurretHolder>().Bullet;
 
-        var spriteRenderer = GetComponent<SpriteRenderer>();
-        var sprite = spriteRenderer.sprite;
-        onCeiling = sprite.name == "turret_c";
-
+        onCeiling = GetComponent<SpriteRenderer>().sprite.name == "turret_c";
     }
 
     // Update is called once per frame
@@ -35,7 +32,7 @@ public class TurretController : MonoBehaviour
             canShoot = shootCounter > shootTimeout;
             return;
         }
-        var raycast = Physics2D.Raycast(transform.position, ThePlayer.transform.position - transform.position);
+        RaycastHit2D raycast = Physics2D.Raycast(transform.position, ThePlayer.transform.position - transform.position);
         Debug.DrawLine(transform.position, raycast.point);
         if (raycast.collider?.gameObject?.CompareTag("Player") == true)
         {
