@@ -1,5 +1,4 @@
-﻿using TMPro;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UIElements;
 
 public class PlayerController : MonoBehaviour
@@ -9,6 +8,8 @@ public class PlayerController : MonoBehaviour
     public float Rotation;
     public GameObject Wrench;
     public AudioClip ThrowSound;
+
+    public bool DebugMode = false;
 
     private AudioSource _audio;
     private float _distToGround;
@@ -35,7 +36,7 @@ public class PlayerController : MonoBehaviour
             direction.Normalize();
             _body.AddForce(-ThrowForce*direction);
 
-            Vector3 wrenchSpawn = transform.position + new Vector3(Mathf.Sign(direction.x) * 0.5f, 0);
+            Vector3 wrenchSpawn = transform.position + new Vector3(Mathf.Sign(direction.x) * 0.75f, 0);
             Vector2 wrenchDir = worldMousePos - wrenchSpawn;
             //create wrench object
             GameObject created = Instantiate(Wrench, wrenchSpawn, Quaternion.Euler(0, 0, 0));
@@ -60,7 +61,10 @@ public class PlayerController : MonoBehaviour
         {
             //Destroy(this.gameObject);
             Debug.Log("Got hit!");
-            GameController.Instance.RestartLoop();
+            if (!DebugMode)
+            {
+                GameController.Instance.RestartLoop();
+            }
         }
     }
 
@@ -78,7 +82,8 @@ public class PlayerController : MonoBehaviour
         if (Input.GetButton("Horizontal") && IsGrounded())
         {
             float horizontal = Input.GetAxis("Horizontal");
-            if (Mathf.Abs(_body.velocity.x) < MaxSpeed)
+            if (Mathf.Abs(_body.velocity.x) < MaxSpeed
+                || (Mathf.Sign(horizontal) != Mathf.Sign(_body.velocity.x)))
             {
                 _body.AddForce(ThrowForce * horizontal * Vector2.right);
             }
