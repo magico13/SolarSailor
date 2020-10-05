@@ -21,8 +21,10 @@ public class GameController : MonoBehaviour
 
     public TextMeshProUGUI WinText;
     public TextMeshProUGUI WinSupplemental;
+    public TextMeshProUGUI CreditText;
 
     public TextMeshProUGUI TitleText;
+    
 
     void Start()
     {
@@ -70,12 +72,31 @@ public class GameController : MonoBehaviour
                 StartGame();
             }
         }
+        else if (HasSeenTitle && !Playing)
+        {
+            //because in credits/win screen
+            if (Input.GetMouseButtonDown((int)MouseButton.LeftMouse))
+            {
+                RestartGame();
+            }
+        }
     }
 
     public void RestartLoop()
     {
         Loops++;
         SceneManager.LoadScene(0);
+    }
+
+    public void RestartGame()
+    {
+        HasSeenTitle = false;
+        Playing = false;
+        Loops = -1;
+        WrenchesThrown = 0;
+        Destroy(BackgroundMusic.Instance);
+        BackgroundMusic.RestartAudio = true;
+        RestartLoop();
     }
 
     public void StartGame()
@@ -102,7 +123,7 @@ public class GameController : MonoBehaviour
         WinText.gameObject.SetActive(true);
         WinSupplemental.gameObject.SetActive(true);
         WinSupplemental.SetText(string.Format(WinSupplemental.text, Mathf.RoundToInt(Countdown), Loops, WrenchesThrown));
-
+        CreditText.gameObject.SetActive(true);
         //deactivate player
         //FindObjectOfType<PlayerController>().gameObject.SetActive(false);
     }
