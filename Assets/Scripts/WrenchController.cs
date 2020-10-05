@@ -9,6 +9,15 @@ public class WrenchController : MonoBehaviour
     void Start()
     {
         _audio = GetComponent<AudioSource>();
+        Destroy(gameObject, DestroyDelay);
+    }
+
+    void FixedUpdate()
+    {
+        if (GetComponent<Rigidbody2D>().IsSleeping())
+        {
+            Destroy(gameObject);
+        }
     }
 
     void OnCollisionEnter2D(Collision2D collision)
@@ -16,7 +25,7 @@ public class WrenchController : MonoBehaviour
         if (collision.collider?.gameObject?.CompareTag("Player") != true)
         {
             _audio.PlayOneShot(HitWallSound, collision.relativeVelocity.magnitude/10f);
-            Destroy(gameObject, DestroyDelay);
+            //Destroy(gameObject, DestroyDelay);
         }
     }
 }

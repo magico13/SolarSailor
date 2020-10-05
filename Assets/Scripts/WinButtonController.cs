@@ -8,6 +8,7 @@ public class WinButtonController : MonoBehaviour
             || otherCollider?.gameObject?.CompareTag("Weapon") == true)
         {
             Debug.Log("Win!");
+            GameController.Instance.DoWin();
         }
     }
 }

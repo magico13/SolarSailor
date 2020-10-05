@@ -27,27 +27,11 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         // if the player clicks, figure out the direction, apply force in the opposite direction
+        if (!GameController.Playing) return;
 
         if (Input.GetMouseButtonDown((int)MouseButton.LeftMouse))
         {
-            Vector3 worldMousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
-            Vector2 direction = worldMousePos - transform.position;
-            direction.Normalize();
-            _body.AddForce(-ThrowForce*direction);
-
-            Vector3 wrenchSpawn = transform.position + new Vector3(Mathf.Sign(direction.x) * 0.75f, 0);
-            Vector2 wrenchDir = worldMousePos - wrenchSpawn;
-            //create wrench object
-            GameObject created = Instantiate(Wrench, wrenchSpawn, Quaternion.Euler(0, 0, 0));
-            created.SetActive(true);
-            Rigidbody2D rigid = created.GetComponent<Rigidbody2D>();
-            rigid.velocity = GetComponent<Rigidbody2D>().velocity;
-            rigid.AddForce(ThrowForce * wrenchDir.normalized);
-            rigid.angularVelocity = (Random.Range(-Rotation, Rotation));
-            Destroy(created, 10f);
-
-            _audio.PlayOneShot(ThrowSound);
+            ThrowWrench();
         }
         if (Input.GetButtonDown("Jump") && IsGrounded())
         {
@@ -57,6 +41,7 @@ public class PlayerController : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D collision)
     {
+        if (!GameController.Playing) return;
         if (collision.gameObject?.CompareTag("EnemyWeapon") == true)
         {
             //Destroy(this.gameObject);
@@ -66,6 +51,28 @@ public class PlayerController : MonoBehaviour
                 GameController.Instance.RestartLoop();
             }
         }
+    }
+
+    void ThrowWrench()
+    {
+        Vector3 worldMousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+        Vector2 direction = worldMousePos - transform.position;
+        direction.Normalize();
+        _body.AddForce(-ThrowForce * direction);
+
+        Vector3 wrenchSpawn = transform.position + new Vector3(Mathf.Sign(direction.x) * 0.75f, 0);
+        Vector2 wrenchDir = worldMousePos - wrenchSpawn;
+        //create wrench object
+        GameObject created = Instantiate(Wrench, wrenchSpawn, Quaternion.Euler(0, 0, 0));
+        created.SetActive(true);
+        Rigidbody2D rigid = created.GetComponent<Rigidbody2D>();
+        rigid.velocity = GetComponent<Rigidbody2D>().velocity;
+        rigid.AddForce(ThrowForce * wrenchDir.normalized);
+        rigid.angularVelocity = (Random.Range(-Rotation, Rotation));
+
+        _audio.PlayOneShot(ThrowSound);
+        GameController.WrenchesThrown++;
     }
 
     bool IsGrounded()
@@ -79,6 +86,7 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (!GameController.Playing) return;
         if (Input.GetButton("Horizontal") && IsGrounded())
         {
             float horizontal = Input.GetAxis("Horizontal");
