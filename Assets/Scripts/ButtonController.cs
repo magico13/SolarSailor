@@ -23,5 +23,6 @@ public class ButtonController : MonoBehaviour
         GetComponent<SpriteRenderer>().sprite = AlternateSprite;
         pressed = true;
         GetComponent<Collider2D>().enabled = false;
+        GetComponent<AudioSource>().Play();
     }
 }

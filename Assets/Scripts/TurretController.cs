@@ -11,6 +11,8 @@ public class TurretController : MonoBehaviour
     bool canShoot = false;
 
     bool onCeiling;
+    bool dead;
+    AudioSource audioSource;
 
     // Start is called before the first frame update
     void Start()
@@ -19,11 +21,22 @@ public class TurretController : MonoBehaviour
         Bullet = FindObjectOfType<TurretHolder>().Bullet;
 
         onCeiling = GetComponent<SpriteRenderer>().sprite.name == "turret_c";
+        audioSource = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (dead)
+        {
+            if (!audioSource.isPlaying)
+            {
+                Destroy(gameObject);
+            }
+            return;
+        }
+
+
         // look for player, try to shoot them
         //Debug.DrawLine(transform.position, ThePlayer.transform.position);
         if (!canShoot)
@@ -57,8 +70,15 @@ public class TurretController : MonoBehaviour
         if (collision.collider?.gameObject?.CompareTag("Weapon") == true)
         {
             //_audio.PlayOneShot(HitWallSound, collision.relativeVelocity.magnitude / 10f);
-            Destroy(gameObject);
+            Explode();
             Destroy(collision.collider.gameObject);
         }
+    }
+
+
+    void Explode()
+    {
+        audioSource.Play();
+        dead = true;
     }
 }
