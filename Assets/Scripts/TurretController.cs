@@ -32,7 +32,7 @@ public class TurretController : MonoBehaviour
             canShoot = shootCounter > shootTimeout;
             return;
         }
-        RaycastHit2D raycast = Physics2D.Raycast(transform.position, ThePlayer.transform.position - transform.position);
+        RaycastHit2D raycast = Physics2D.Raycast(transform.position, ThePlayer.transform.position - transform.position, 1000, LayerMask.GetMask("Default", "Player"));
         Debug.DrawLine(transform.position, raycast.point);
         if (raycast.collider?.gameObject?.CompareTag("Player") == true)
         {

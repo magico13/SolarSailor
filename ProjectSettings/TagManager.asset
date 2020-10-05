@@ -6,7 +6,7 @@ TagManager:
   tags:
   - Weapon
   - EnemyWeapon
-  - Door_L1
+  - Clone
   layers:
   - Default
   - TransparentFX
@@ -18,8 +18,8 @@ TagManager:
   - 
   - Player
   - Background Image
-  - 
-  - 
+  - Bullets
+  - Turrets
   - 
   - 
   - 

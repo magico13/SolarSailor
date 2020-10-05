@@ -14,7 +14,8 @@ public class WrenchController : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (GetComponent<Rigidbody2D>().IsSleeping())
+        if (GetComponent<Rigidbody2D>().IsSleeping() 
+            && GetComponent<DynamicCloneController>() == null) //clones die when the original does
         {
             Destroy(gameObject);
         }
